@@ -1,0 +1,48 @@
+header {
+    padding-bottom: 20px;
+    border-bottom: 1px solid #d4d2d0;
+}
+#wpbody-content {
+    border: 1px solid #d4d2d0;
+}
+.dashboard-header {
+    justify-content: space-between;
+}
+.title-sub {
+    opacity: .6;
+    margin-left: 20px;
+    margin-top: -15px;
+}
+#view-name, .Chartjs pre {
+    margin: 20px;
+    font-size: 1.4em;
+    font-weight: 300;
+}
+#active-users-container {
+    margin: 20px;
+}
+#view-selector-container > div {
+    display: flex;
+    margin-top: 10px;
+    justify-content: space-between;
+}
+.ViewSelector2-item, .DateRangeSelector-item {
+    display: grid;
+    width: 30%;
+    margin: 10px;
+}
+.ViewSelector2-item label {
+    font-weight: 700;
+}
+.line-charts, .pie-charts {
+    justify-content: space-around;
+    margin: 0;
+    border-bottom: 1px solid #d4d2d0;
+}
+#date-range-selector-1-container > div, #date-range-selector-2-container > div {
+    display: flex;
+    justify-content: space-around;
+}
+#embed-api-auth-container div:last-child:not(:first-child) {
+    display: none !important;
+}
