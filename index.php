@@ -18,7 +18,7 @@ define('GADKIWI_DIR', __DIR__ . '/');
 
 require_once __DIR__ . '/Src/Client.php';
 require_once __DIR__ . '/Src/class-am-notification.php';
-require_once __DIR__ . '/Src/config.php';
+require_once __DIR__ . '/Src/tools/config.php';
 require_once __DIR__ . '/Src/Config.php';
 require_once __DIR__ . '/Src/Client.php';
 require_once __DIR__ . '/Src/Abstract.php';
