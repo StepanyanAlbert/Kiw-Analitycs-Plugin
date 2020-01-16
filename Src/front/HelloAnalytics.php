@@ -900,7 +900,6 @@
 
 
     function drawRegionsMap() {
-        console.log(countriesArr);
         let data = google.visualization.arrayToDataTable(countriesArr);
 
         let options = {};

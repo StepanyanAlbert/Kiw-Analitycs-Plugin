@@ -27,13 +27,8 @@
 		</tr>
 		<tr>
 			<td colspan="2">
-				<input onclick="saveCode()" type="submit" class="button button-secondary" name="gadwp_authorize" value="<?php _e( "Save Access Code", 'google-analytics-dashboard-for-wp' ); ?>" />
+				<input type="submit" class="button button-secondary" name="gadwp_authorize" value="<?php _e( "Save Access Code", 'google-analytics-dashboard-for-wp' ); ?>" />
 			</td>
 		</tr>
 	</table>
 </form>
-<script>
-    function saveCode() {
-        localStorage.setItem('clientId', document.getElementById('gadwp_access_code').value);
-    }
-</script>
