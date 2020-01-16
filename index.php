@@ -13,7 +13,7 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-define('GADKIWI_DIR', __DIR__ . '/');
+define('GADKIWI_DIR', __DIR__ . 'index.php/');
 
 
 require_once __DIR__ . '/Src/Client.php';

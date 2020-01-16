@@ -118,23 +118,23 @@ if ( ! class_exists( 'GADWP_Manager' ) ) {
 			 * Load notifications class
 			 */
 			if ( is_admin() ) {
-				include_once ( GADKIWI_DIR . 'Src/class-am-notification.php' );
+				include_once(GADKIWI_DIR . 'Src/class-am-notification.php');
 			}
 
 			/*
 			 * Load Tools class
 			 */
-			include_once ( GADKIWI_DIR . 'Src/tools/tools.php' );
+			include_once(GADKIWI_DIR . 'Src/tools/tools.php');
 
 			/*
 			 * Load Config class
 			 */
-			include_once ( GADKIWI_DIR . 'Src/config.php' );
+			include_once(GADKIWI_DIR . 'Src/config.php');
 
 			/*
 			 * Load GAPI Controller class
 			 */
-			include_once ( GADKIWI_DIR . 'Src/tools/gapi.php' );
+			include_once(GADKIWI_DIR . 'Src/tools/gapi.php');
 
 			/*
 			 * Plugin i18n
@@ -149,20 +149,20 @@ if ( ! class_exists( 'GADWP_Manager' ) ) {
 			/*
 			 * Include Install
 			 */
-			include_once ( GADKIWI_DIR . 'Src/install/install.php' );
+			include_once(GADKIWI_DIR . 'Src/install/install.php');
 			register_activation_hook( GADWP_FILE, array( 'GADWP_Install', 'install' ) );
 
 			/*
 			 * Include Uninstall
 			 */
-			include_once ( GADKIWI_DIR . 'Src/install/uninstall.php' );
+			include_once(GADKIWI_DIR . 'Src/install/uninstall.php');
 			register_uninstall_hook( GADWP_FILE, array( 'GADWP_Uninstall', 'uninstall' ) );
 
 			/*
 			 * Load Frontend Widgets
 			 * (needed during ajax)
 			 */
-			include_once ( GADKIWI_DIR . 'Src/front/widgets.php' );
+			include_once(GADKIWI_DIR . 'Src/front/widgets.php');
 
 			/*
 			 * Add Frontend Widgets
@@ -195,14 +195,14 @@ if ( ! class_exists( 'GADWP_Manager' ) ) {
 						/*
 						 * Load Backend ajax actions
 						 */
-						include_once ( GADKIWI_DIR . 'Src/admin/ajax-actions.php' );
+						include_once(GADKIWI_DIR . 'Src/admin/ajax-actions.php');
 						self::$instance->backend_actions = new GADWP_Backend_Ajax();
 					}
 
 					/*
 					 * Load Frontend ajax actions
 					 */
-					include_once ( GADKIWI_DIR . 'Src/front/ajax-actions.php' );
+					include_once(GADKIWI_DIR . 'Src/front/ajax-actions.php');
 					self::$instance->frontend_actions = new GADWP_Frontend_Ajax();
 
 					/*
@@ -215,7 +215,7 @@ if ( ! class_exists( 'GADWP_Manager' ) ) {
 						/*
 						 * Load Backend Item Reports for Quick Edit
 						 */
-						include_once ( GADKIWI_DIR . 'Src/admin/item-reports.php' );
+						include_once(GADKIWI_DIR . 'Src/admin/item-reports.php');
 						self::$instance->backend_item_reports = new GADWP_Backend_Item_Reports();
 					}
 				} else if ( GADWP_Tools::check_roles( self::$instance->config->options['access_back'] ) ) {
@@ -223,14 +223,14 @@ if ( ! class_exists( 'GADWP_Manager' ) ) {
 					/*
 					 * Load Backend Setup
 					 */
-					include_once ( GADKIWI_DIR . 'Src/admin/setup.php' );
+					include_once(GADKIWI_DIR . 'Src/admin/setup.php');
 					self::$instance->backend_setup = new GADWP_Backend_Setup();
 
 					if ( self::$instance->config->options['dashboard_widget'] ) {
 						/*
 						 * Load Backend Widget
 						 */
-						include_once ( GADKIWI_DIR . 'Src/admin/widgets.php' );
+						include_once(GADKIWI_DIR . 'Src/admin/widgets.php');
 						self::$instance->backend_widgets = new GADWP_Backend_Widgets();
 					}
 
@@ -238,11 +238,11 @@ if ( ! class_exists( 'GADWP_Manager' ) ) {
 						/*
 						 * Load Backend Item Reports
 						 */
-						include_once ( GADKIWI_DIR . 'Src/admin/item-reports.php' );
+						include_once(GADKIWI_DIR . 'Src/admin/item-reports.php');
 						self::$instance->backend_item_reports = new GADWP_Backend_Item_Reports();
 					}
 
-					include_once ( GADKIWI_DIR . 'Src/admin/tracking.php' );
+					include_once(GADKIWI_DIR . 'Src/admin/tracking.php');
 					self::$instance->usage_tracking = new ExactMetrics_Tracking();
 				}
 			} else {
@@ -250,14 +250,14 @@ if ( ! class_exists( 'GADWP_Manager' ) ) {
 					/*
 					 * Load Frontend Setup
 					 */
-					include_once ( GADKIWI_DIR . 'Src/front/setup.php' );
+					include_once(GADKIWI_DIR . 'Src/front/setup.php');
 					self::$instance->frontend_setup = new GADWP_Frontend_Setup();
 
 					if ( self::$instance->config->options['frontend_item_reports'] ) {
 						/*
 						 * Load Frontend Item Reports
 						 */
-						include_once ( GADKIWI_DIR . 'Src/front/item-reports.php' );
+						include_once(GADKIWI_DIR . 'Src/front/item-reports.php');
 						self::$instance->frontend_item_reports = new GADWP_Frontend_Item_Reports();
 					}
 				}
@@ -266,7 +266,7 @@ if ( ! class_exists( 'GADWP_Manager' ) ) {
 					/*
 					 * Load tracking class
 					 */
-					include_once ( GADKIWI_DIR . 'Src/front/tracking.php' );
+					include_once(GADKIWI_DIR . 'Src/front/tracking.php');
 					self::$instance->tracking = new GADWP_Tracking();
 				}
 			}
