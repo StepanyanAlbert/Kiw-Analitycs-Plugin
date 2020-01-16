@@ -2,7 +2,7 @@
 <html>
 <head>
     <title>KIWI GAD</title>
-    <link rel="stylesheet" type="text/css" href="'../wp-content/plugins/GAD_plugin/Src/front/css/style.css'">
+    <link rel="stylesheet" type="text/css" href="'../wp-content/plugins/Kiw-Analitycs-Plugin/Src/front/css/style.css'">
 </head>
 <body>
 <!-- Create the containing elements. -->
@@ -51,6 +51,7 @@
         <div class="Chartjs Chart-content">
             <figure class="Chartjs-figure" id="chart-1-container"></figure>
             <ol class="Chartjs-legend" id="legend-1-container"></ol>
+            <div id="regions_div" style="width: 500px; height: 500px; display: none"></div>
         </div>
     </div>
 </div>
@@ -65,6 +66,7 @@
 </script>
 
 <!-- Include the chart.js and moment.js scripts. -->
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.2/moment.min.js"></script>
 
@@ -84,7 +86,8 @@
     let dataIds,
         currentValue,
         dateRangeSelector1,
-        i = 0;
+        i = 0,
+        countriesArr = [];
 
     gapi.analytics.ready(function() {
         if(localStorage.getItem('clientId') && localStorage.getItem('clientId') != 'null') {
@@ -205,21 +208,21 @@
 
             if (currentValue === "Users"){
                 renderYearOverYearChart( dataIds );
-            }else if (currentValue === 'Sessions') {
-                renderWeekOverWeekChart( dataIds );
-            }else if(currentValue ==='Technology') {
-                renderTopBrowsersChart( dataIds );
-            }else if (currentValue === 'Location') {
-                renderTopCountriesChart( dataIds );
-            }else if (currentValue ===  'Traffic'){
-                renderReferrersChart( dataIds );
-            }else if (currentValue ===  'LoadTime'){
-                renderPageLoadChart( dataIds );
-            }else if (currentValue ===  'Age'){
-                renderAgeChart( dataIds );
-            }else if (currentValue ===  'Gender'){
-                renderGenderChart( dataIds );
-            }else if (currentValue ===  'Device'){
+            } else if (currentValue === 'Sessions') {
+                 renderWeekOverWeekChart( dataIds );
+            } else if(currentValue ==='Technology') {
+                 renderTopBrowsersChart( dataIds );
+            } else if (currentValue === 'Location') {
+                 renderTopCountriesChart( dataIds );
+            } else if (currentValue ===  'Traffic'){
+                 renderReferrersChart( dataIds );
+            } else if (currentValue ===  'LoadTime'){
+                 renderPageLoadChart( dataIds );
+            } else if (currentValue ===  'Age'){
+                 renderAgeChart( dataIds );
+            } else if (currentValue ===  'Gender'){
+                 renderGenderChart( dataIds );
+            } else if (currentValue ===  'Device'){
                 renderDeviceChart( dataIds );
             }
         });
@@ -410,27 +413,28 @@
             'max-results': 5
         })
             .then(function (response) {
-
-                let data = [];
+                console.log('conutries', response);
+                let data = [['Country', 'Popularity']];
                 let colors = ['#4D5360', '#949FB1', '#D4CCC5', '#E2EAE9', '#F7464A'];
 
                 if(response.rows) {
                     response.rows.forEach(function (row, i) {
-                        data.push({
-                            label: row[0],
-                            value: +row[1],
-                            color: colors[i]
-                        });
+                        data.push([row[0], +row[1]]);
                     });
-                }else{
-                    data.push({
-                        label: 'Empty',
-                        value: 100,
-                        color: colors[0]
-                    });
+                } else {
+                    data.push(['Empty',100]);
                 }
-                new Chart(makeCanvas('chart-1-container')).Doughnut(data);
-                generateLegend('legend-1-container', data);
+
+                countriesArr = data;
+
+                google.charts.load('current', {
+                    'packages':['geochart'],
+                    'mapsApiKey': 'AIzaSyD-9tSrke72PouQMnMX-a7eZSW0jkFMBWY'
+                });
+                google.charts.setOnLoadCallback(drawRegionsMap);
+
+                // new Chart(makeCanvas('chart-1-container')).Doughnut(data);
+                // generateLegend('legend-1-container', data);
             });
     }
     /**
@@ -568,8 +572,8 @@
             //         color: colors[0]
             //     });
             // }
-            new Chart(makeCanvas('chart-1-container')).Bar(data);
-            generateLegend('legend-1-container', data);
+            // new Chart(makeCanvas('chart-1-container')).Bar(data);
+            // generateLegend('legend-1-container', data);
         });
     }
 
@@ -833,6 +837,18 @@
         currentValue = $( "#form-control-select1" ).val();
         $("#content").css('overflow','').css('overflow-y','visible').css('height','');
         load();
+
+
+        if(currentValue == 'Location') {
+            $('#chart-1-container').hide();
+            $('#legend-1-container').hide();
+            $('#regions_div').show();
+        } else {
+            $('#chart-1-container').show();
+            $('#legend-1-container').show();
+            $('#regions_div').hide();
+        }
+
         switch (currentValue){
             case 'Users':
                 renderYearOverYearChart( dataIds );
@@ -880,6 +896,18 @@
                 }
             }
         }
+    }
+
+
+    function drawRegionsMap() {
+        console.log(countriesArr);
+        let data = google.visualization.arrayToDataTable(countriesArr);
+
+        let options = {};
+
+        let chart = new google.visualization.GeoChart(document.getElementById('regions_div'));
+
+        chart.draw(data, options);
     }
 
     setTimeout(function () {
