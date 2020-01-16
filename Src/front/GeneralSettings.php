@@ -70,6 +70,6 @@ require_once GADKIWI_DIR . '/Src/access-code.php';
 
 <script>
 
-    localStorage.setItem('clientId', <?= $gadwp::instance()->config->options['client_id'] ?>);
+    localStorage.setItem('clientId', "<?= $gadwp::instance()->config->options['client_id'] ?>");
 
 </script>
