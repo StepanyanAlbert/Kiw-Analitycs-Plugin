@@ -129,7 +129,7 @@ if ( ! class_exists( 'GADWP_Manager' ) ) {
 			/*
 			 * Load Config class
 			 */
-			include_once(GADKIWI_DIR . 'Src/config.php');
+			include_once(GADKIWI_DIR . 'Src/tools/config.php');
 
 			/*
 			 * Load GAPI Controller class
