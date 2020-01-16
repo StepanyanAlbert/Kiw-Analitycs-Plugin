@@ -13,47 +13,49 @@ function enqueue_admin_scraping_styles_and_scripts()
 add_action('admin_enqueue_scripts', 'enqueue_admin_scraping_styles_and_scripts');
 
 function admin_scraping_menu_init(){
+//    add_menu_page(
+//        'Dashboard',
+//        'KIWI_GAD',
+//        'administrator',
+//        'google-analytics-dashboard',
+//        'init_dashboard',
+//        'dashicons-media-text'
+//    );
+//    add_submenu_page(
+//        'google-analytics-dashboard',
+//        'Dashboard',
+//        'Dashboard',
+//        'administrator',
+//        'google-analytics-dashboard',
+//        'init_dashboard'
+//    );
     add_menu_page(
         'Dashboard',
         'KIWI_GAD',
         'administrator',
-        'google-analytics-dashboard',
-        'init_dashboard',
+        'google-analytics-dashboard-settings',
+        'init_settings_page',
         'dashicons-media-text'
     );
-    add_submenu_page(
-        'google-analytics-dashboard',
-        'Dashboard',
-        'Dashboard',
-        'administrator',
-        'google-analytics-dashboard',
-        'init_dashboard'
-    );
-    add_submenu_page(
-        'google-analytics-dashboard',
-        'Settings',
-        'General Settings',
-        'administrator',
-        'google-analytics-dashboard-settings',
-        'init_settings_page'
-    );
-//    add_submenu_page(
-//        'KIWI_GAD',
-//        'Settings',
-//        'General Settings',
-//        'administrator',
-//        'google-analytics-dashboard-settings',
-//        'init_settings_page'
-//    );
 }
 add_action('admin_menu', 'admin_scraping_menu_init');
 
-function init_dashboard()
-{
-    require_once 'Templates/HelloAnalytics.php';
+add_action('wp_dashboard_setup', 'my_custom_dashboard_widgets');
+
+function my_custom_dashboard_widgets() {
+    wp_add_dashboard_widget('custom_help_widget', 'Google Analytics Dashboard (KIWI)', 'custom_dashboard_help');
 }
+
+function custom_dashboard_help() {
+    include 'Src/front/HelloAnalytics.php';
+}
+
+//function init_dashboard()
+//{
+//    require_once 'Src/front/HelloAnalytics.php';
+//}
 function init_settings_page()
 {
-    require_once 'Templates/GeneralSettings.php';
+    require_once 'Src/front/GeneralSettings.php';
 }
 

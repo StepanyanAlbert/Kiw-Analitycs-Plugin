@@ -1,0 +1,91 @@
+header {
+    padding-bottom: 20px;
+    border-bottom: 1px solid #d4d2d0;
+}
+#wpbody-content {
+    border: 1px solid #d4d2d0;
+}
+
+.dashboard-header {
+    justify-content: space-between;
+}
+.title-sub {
+    opacity: .6;
+    margin-left: 20px;
+    margin-top: -15px;
+}
+#view-name, .Chartjs pre {
+    margin: 20px;
+    font-size: 1.4em;
+    font-weight: 300;
+}
+#active-users-container {
+    margin: 20px;
+}
+#view-selector-container > div {
+    display: flex;
+    margin-top: 10px;
+    justify-content: space-between;
+}
+.ViewSelector2-item {
+    display: grid;
+    margin-top: 10px;
+}
+.DateRangeSelector-item{
+    display: grid;
+    max-width: 40%;
+    margin-top: 10px;
+    margin-right:2%;
+}
+.ViewSelector2-item label, .DateRangeSelector-item label {
+    font-weight: 700;
+}
+.line-charts, .pie-charts {
+    justify-content: space-around;
+    margin: 0;
+    border-bottom: 1px solid #d4d2d0;
+}
+.Chart-content{
+    width: 100%;
+    /*margin-left: 2%;*/
+}
+#myProgress {
+    width: 98%;
+    background-color: #ddd;
+    margin: 5px;
+}
+
+#myBar {
+    width: 1%;
+    height: 3px;
+    background-color: rgba(72,154,197,0.7);
+}
+#date-range-selector-1-container {
+    margin-left: 12px;
+}
+#date-range-selector-1-container > div{
+    display: flex;
+    justify-content: space-around;
+}
+.DateRangeSelector-item:last-child {
+    margin-left: 14px;
+}
+#embed-api-auth-container div:last-child:not(:first-child) {
+    display: none !important;
+}
+.input-side {
+    margin-top: 9px;
+    margin-left: 14px;
+}
+.input-side .form-group {
+    width: 150px;
+}
+.input-side label {
+    font-weight: 700;
+}
+#form-control-select1{
+    height: 10px;
+}
+.Chartjs-figure {
+    margin: 10px 0 5px 14px;
+}
