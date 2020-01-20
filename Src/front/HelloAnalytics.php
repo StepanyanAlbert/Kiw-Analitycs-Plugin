@@ -49,9 +49,9 @@
             <div id="myBar"></div>
         </div>
         <div class="Chartjs Chart-content">
+            <div id="regions_div" style="width: 500px; height: 500px; display: none"></div>
             <figure class="Chartjs-figure" id="chart-1-container"></figure>
             <ol class="Chartjs-legend" id="legend-1-container"></ol>
-            <div id="regions_div" style="width: 500px; height: 500px; display: none"></div>
         </div>
     </div>
 </div>
@@ -380,15 +380,20 @@
             'start-date': moment(dateRangeSelector1.startDateInput.value).format('YYYY-MM-DD'),
             'end-date': moment(dateRangeSelector1.endDateInput.value).format('YYYY-MM-DD'),
             'max-results': 5
-        })
-            .then(function (response) {
+        }).then(function (response) {
                 let data = [];
                 let colors = ['#4D5360', '#949FB1', '#D4CCC5', '#E2EAE9', '#F7464A'];
+                let sum = 0;
+
+                response.rows.forEach(function (row) {
+                    sum += +row[1];
+                });
+
                 if(response.rows) {
                     response.rows.forEach(function (row, i) {
-                        data.push({value: +row[1], color: colors[i], label: row[0]});
+                        data.push({value: +row[1], color: colors[i], label: row[0] + ' (' +row[1] / sum * 100 + '%)'});
                     });
-                }else{
+                } else {
                     data.push({value: 100, color: colors[0], label: 'Empty'});
                 }
                 new Chart(makeCanvas('chart-1-container')).Doughnut(data);
@@ -411,19 +416,35 @@
             'start-date': moment(dateRangeSelector1.startDateInput.value).format('YYYY-MM-DD'),
             'end-date': moment(dateRangeSelector1.endDateInput.value).format('YYYY-MM-DD'),
             'max-results': 5
-        })
-            .then(function (response) {
+        }).then(function (response) {
                 console.log('conutries', response);
                 let data = [['Country', 'Popularity']];
-                let colors = ['#4D5360', '#949FB1', '#D4CCC5', '#E2EAE9', '#F7464A'];
+                let data1 = [];
+                let labels = [];
 
                 if(response.rows) {
-                    response.rows.forEach(function (row, i) {
+                    response.rows.forEach(function (row) {
                         data.push([row[0], +row[1]]);
+                        data1.push(+row[1]);
+                        labels.push(row[0]);
                     });
                 } else {
                     data.push(['Empty',100]);
                 }
+
+                let data2 = {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'Top Countries',
+                            fillColor: 'rgba(72,154,197,0.7)',
+                            strokeColor: 'rgba(151,187,205,1)',
+                            data: data1,
+                        }
+                    ]
+                };
+                new Chart(makeCanvas('chart-1-container')).Bar(data2);
+                generateLegend('legend-1-container', data2.datasets);
 
                 countriesArr = data;
 
@@ -449,8 +470,7 @@
             'sort': '-ga:pageviews',
             'start-date': moment(dateRangeSelector1.startDateInput.value).format('YYYY-MM-DD'),
             'end-date': moment(dateRangeSelector1.endDateInput.value).format('YYYY-MM-DD')
-        })
-            .then(function (response) {
+        }).then(function (response) {
                 let data1 = [];
                 let labels = [];
                 if(response.rows){ response.rows.forEach(function (row) {
@@ -458,7 +478,7 @@
                     labels.push(name.charAt(0).toUpperCase() + name.slice(1));
                     data1.push(+row[4]);
                 });
-                }else{
+                } else {
                     labels.push('');
                     data1.push(0);
                 }
@@ -481,8 +501,8 @@
     function renderPageLoadChart( ids ) {
         query({
             'ids': ids,
-            'dimensions': 'ga:date,ga:nthDay',
-            'metrics': 'ga:avgPageLoadTime',
+            'dimensions': 'ga:date',
+            'metrics': 'ga:pageLoadTime',
             'start-date': moment(dateRangeSelector1.startDateInput.value).format('YYYY-MM-DD'),
             'end-date': moment(dateRangeSelector1.endDateInput.value).format('YYYY-MM-DD')
         }).then(function (response) {
@@ -492,7 +512,7 @@
             let labelsAll = [];
             if(response.rows){
                 response.rows.forEach(function (row) {
-                    data1.push(parseFloat(row[2]));
+                    data1.push(parseFloat(row[1]));
                     labels.push(+row[0]);
                 });
             } else {
@@ -509,7 +529,7 @@
             let data = {
                 labels: labelsAll,
                 datasets: [{
-                    label: 'Avg. Page Load Time(sec)',
+                    label: 'Avg. Page Load Time(msec)',
                     fillColor: 'rgba(72,154,197,0.7)',
                     strokeColor: 'rgba(151,187,205,1)',
                     data: data1,
@@ -530,50 +550,31 @@
         }).then(function (response) {
             console.log('age', response);
 
-            // let data1 = [];
-            // let labels = [];
-            // let colors = ['#4D5360', '#949FB1'];
-            // if(response.rows){ response.rows.forEach(function (row) {
-            //     let name = row[0].replace(/^\(+|\)+$/g, '');
-            //     labels.push(name.charAt(0).toUpperCase() + name.slice(1));
-            //     data1.push(+row[4]);
-            // });
-            // } else {
-            //     labels.push('Male','Female');
-            //     data1.push(0,0);
-            // }
-            // let data = {
-            //     labels: labels,
-            //     datasets: [
-            //         {
-            //             label: 'Genders',
-            //             fillColor: 'rgba(72,154,197,0.7)',
-            //             strokeColor: 'rgba(151,187,205,1)',
-            //             data: data1,
-            //         }
-            //     ]
-            // };
+            let data1 = [];
+            let labels = [];
+            if(response.rows) {
+                response.rows.forEach(function (row) {
+                    data1.push(+row[1]);
+                    labels.push(row[0]);
+                });
+            } else {
+                labels.push('Empty');
+                data1.push(0);
+            }
+            let data = {
+                labels: labels,
+                datasets: [
+                    {
+                        label: 'Age',
+                        fillColor: 'rgba(72,154,197,0.7)',
+                        strokeColor: 'rgba(151,187,205,1)',
+                        data: data1,
+                    }
+                ]
+            };
 
-            // let data = [];
-            // let colors = ['#4D5360', '#949FB1'];
-            //
-            // if(response.rows) {
-            //     response.rows.forEach(function (row, i) {
-            //         data.push({
-            //             label: row[0],
-            //             value: +row[1],
-            //             color: colors[i]
-            //         });
-            //     });
-            // } else {
-            //     data.push({
-            //         label: 'Empty',
-            //         value: 100,
-            //         color: colors[0]
-            //     });
-            // }
-            // new Chart(makeCanvas('chart-1-container')).Bar(data);
-            // generateLegend('legend-1-container', data);
+            new Chart(makeCanvas('chart-1-container')).Bar(data);
+            generateLegend('legend-1-container', data.datasets);
         });
     }
 
@@ -605,31 +606,6 @@
                     color: colors[0]
                 });
             }
-
-
-            // let data1 = [];
-            //    let labels = [];
-            //    let colors = ['#4D5360', '#949FB1'];
-            //    if(response.rows){ response.rows.forEach(function (row) {
-            //        let name = row[0].replace(/^\(+|\)+$/g, '');
-            //        labels.push(name.charAt(0).toUpperCase() + name.slice(1));
-            //        data1.push(+row[4]);
-            //    });
-            //    } else {
-            //        labels.push('Male','Female');
-            //        data1.push(0,0);
-            //    }
-            //    let data = {
-            //        labels: labels,
-            //        datasets: [
-            //            {
-            //                label: 'Genders',
-            //                fillColor: 'rgba(72,154,197,0.7)',
-            //                strokeColor: 'rgba(151,187,205,1)',
-            //                data: data1,
-            //            }
-            //        ]
-            //    };
                new Chart(makeCanvas('chart-1-container')).Doughnut(data);
                generateLegend('legend-1-container', data);
            });
@@ -643,30 +619,58 @@
             'sort': '-ga:pageviews',
             'start-date': moment(dateRangeSelector1.startDateInput.value).format('YYYY-MM-DD'),
             'end-date': moment(dateRangeSelector1.endDateInput.value).format('YYYY-MM-DD')
-        })
-            .then(function (response) {
+        }).then(function (response) {
+            console.log('device', response);
+            let data = [];
+            let colors = ['#4D5360', '#949FB1', '#D4CCC5'];
 
-                let data = [];
-                let colors = ['#4D5360', '#949FB1', '#D4CCC5'];
+            if(response.rows) {
+                let sum = 0;
 
-                if(response.rows) {
-                    response.rows.forEach(function (row, i) {
-                        data.push({
-                            label: row[0].charAt(0).toUpperCase() + row[0].slice(1),
-                            value: +row[1],
-                            color: colors[i]
-                        });
-                    });
-                }else{
+                response.rows.forEach(function (row, i) {
+                    sum += +row[1];
+                });
+
+                response.rows.forEach(function (row, i) {
+                    let percent = ' (' + (+row[1] / sum * 100).toFixed(2) + '%)';
+                    let name = ' ' + row[0].charAt(0).toUpperCase() + row[0].slice(1);
+                    let icon;
+
+                    if (name.includes('Desktop')) {
+                        icon = ' <i class="fa fa-desktop"></i> ';
+                    } else if (name.includes('Mobile')) {
+                        icon = ' <i style="font-size: 19px" class="fa fa-mobile"></i> ';
+                    } else if (name.includes('Tablet')) {
+                        icon = ' <i style="font-size: 16px" class="fa fa-tablet"></i> ';
+                    }
+
                     data.push({
-                        label: 'Empty',
-                        value: 100,
-                        color: colors[0]
+                        label: name,
+                        value: +row[1],
+                        color: colors[i]
                     });
-                }
-                new Chart(makeCanvas('chart-1-container')).Doughnut(data);
-                generateLegend('legend-1-container', data);
-            });
+
+                    console.log(icon);
+                    console.log(percent);
+
+                    setTimeout(function () {
+                        console.log($('ol.Chartjs-legend li'));
+                        $('#legend-1-container').append(icon + name + percent + '<br/>');
+                        $('#legend-1-container li').hide();
+                    }, 100);
+                });
+            } else {
+                data.push({
+                    label: 'Empty',
+                    value: 100,
+                    color: colors[0]
+                });
+            }
+            new Chart(makeCanvas('chart-1-container')).Doughnut(data);
+            generateLegend('legend-1-container', data);
+
+
+        });
     }
     /**
      * Extend the Embed APIs `gapi.analytics.report.Data` component to
@@ -821,9 +825,7 @@
             'start-date': '7daysAgo',
             'end-date': 'today',
             'metrics': 'ga:sessions'
-        })
-            .then(function( response ) {
-                console.log(response);
+        }).then(function( response ) {
                 var formattedJson = JSON.stringify(response.result, null, 2);
                 document.getElementById('query-output').value = formattedJson;
             })
@@ -836,16 +838,12 @@
     function selectCategory() {
         currentValue = $( "#form-control-select1" ).val();
         $("#content").css('overflow','').css('overflow-y','visible').css('height','');
+
         load();
 
-
         if(currentValue == 'Location') {
-            $('#chart-1-container').hide();
-            $('#legend-1-container').hide();
             $('#regions_div').show();
         } else {
-            $('#chart-1-container').show();
-            $('#legend-1-container').show();
             $('#regions_div').hide();
         }
 
@@ -901,9 +899,7 @@
 
     function drawRegionsMap() {
         let data = google.visualization.arrayToDataTable(countriesArr);
-
-        let options = {};
-
+        let options = {colorAxis: {colors: ['blue']}};
         let chart = new google.visualization.GeoChart(document.getElementById('regions_div'));
 
         chart.draw(data, options);
