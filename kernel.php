@@ -32,11 +32,11 @@ function my_custom_dashboard_widgets() {
 }
 
 function custom_dashboard_help() {
-    include 'Src/front/HelloAnalytics.php';
+    include 'HelloAnalytics.php';
 }
 
 function init_settings_page()
 {
-    require_once 'Src/front/GeneralSettings.php';
+    require_once 'GeneralSettings.php';
 }
 
