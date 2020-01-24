@@ -9,26 +9,11 @@ function enqueue_admin_scraping_styles_and_scripts()
     wp_enqueue_script('boot3', 'https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js', ['jquery'], '', true);
     wp_enqueue_script('boot4', 'https://code.jquery.com/jquery-3.4.1.slim.min.js', ['jquery'], '', true);
     wp_enqueue_style('bootstrap3', 'https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css');
+    wp_enqueue_style('fonts', 'https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css');
 }
 add_action('admin_enqueue_scripts', 'enqueue_admin_scraping_styles_and_scripts');
 
 function admin_scraping_menu_init(){
-//    add_menu_page(
-//        'Dashboard',
-//        'KIWI_GAD',
-//        'administrator',
-//        'google-analytics-dashboard',
-//        'init_dashboard',
-//        'dashicons-media-text'
-//    );
-//    add_submenu_page(
-//        'google-analytics-dashboard',
-//        'Dashboard',
-//        'Dashboard',
-//        'administrator',
-//        'google-analytics-dashboard',
-//        'init_dashboard'
-//    );
     add_menu_page(
         'Dashboard',
         'KIWI_GAD',
@@ -47,15 +32,11 @@ function my_custom_dashboard_widgets() {
 }
 
 function custom_dashboard_help() {
-    include 'Src/front/HelloAnalytics.php';
+    include 'HelloAnalytics.php';
 }
 
-//function init_dashboard()
-//{
-//    require_once 'Src/front/HelloAnalytics.php';
-//}
 function init_settings_page()
 {
-    require_once 'Src/front/GeneralSettings.php';
+    require_once 'GeneralSettings.php';
 }
 

@@ -89,3 +89,9 @@ header {
 .Chartjs-figure {
     margin: 10px 0 5px 14px;
 }
+.gapi-analytics-auth-styles-signinbutton {
+    width: 100% !important;
+}
+.gapi-analytics-auth-styles-signinbutton:hover {
+    cursor: pointer !important;
+}
