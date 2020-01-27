@@ -6,12 +6,12 @@
 </head>
 <body>
 <!-- Create the containing elements. -->
-<div id="authorize-button-box" style="display: none">
-    <h1 class="text-center">Google analytics</h1>
-    <h6 class="text-center">You need to <a href="admin.php?page=google-analytics-dashboard-settings">authorize account</a> to see your analytics data</h6>
-</div>
+<!--<div id="authorize-button-box" style="display: none">-->
+<!--    <h1 class="text-center">Google analytics</h1>-->
+<!--    <h6 class="text-center">You need to <a href="admin.php?page=google-analytics-dashboard-settings">authorize account</a> to see your analytics data</h6>-->
+<!--</div>-->
 
-<div id="content" style="display: none">
+<div id="content">
     <header>
         <div id="query-output"></div>
         <div id="embed-api-auth-container"></div>

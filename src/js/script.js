@@ -5,12 +5,7 @@ let dataIds,
     countriesArr = [];
 
 gapi.analytics.ready(function() {
-    if(localStorage.getItem('clientId') && localStorage.getItem('clientId') != 'null') {
-        document.getElementById('content').style.display = 'block';
-        renderAll();
-    } else {
-        document.getElementById('authorize-button-box').style.display = 'block';
-    }
+    renderAll();
 });
 
 function renderAll() {
@@ -22,7 +17,7 @@ function renderAll() {
      */
     gapi.analytics.auth.authorize({
         container: 'embed-api-auth-container',
-        clientid: localStorage.getItem('clientId')
+        clientid: '935340515013-pm30ic9co6edran12s4hotdclfoe86va.apps.googleusercontent.com'
     });
 
 
