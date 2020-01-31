@@ -2,16 +2,18 @@
 <html>
 <head>
     <title>KIWI GAD</title>
+    <!-- Include the CSS that styles the charts. -->
+    <link rel="stylesheet" href="../wp-content/plugins/Kiw-Analitycs-Plugin/src/css/chartjs-vizualizations.css">
     <link rel="stylesheet" type="text/css" href="'../wp-content/plugins/Kiw-Analitycs-Plugin/src/css/style.css'">
 </head>
 <body>
 <!-- Create the containing elements. -->
-<!--<div id="authorize-button-box" style="display: none">-->
-<!--    <h1 class="text-center">Google analytics</h1>-->
-<!--    <h6 class="text-center">You need to <a href="admin.php?page=google-analytics-dashboard-settings">authorize account</a> to see your analytics data</h6>-->
-<!--</div>-->
+<div id="authorize-button-box" style="display: none">
+    <h1 class="text-center">Google analytics</h1>
+    <h6 class="text-center">You need to <a href="admin.php?page=google-analytics-dashboard-settings">authorize account</a> to see your analytics data</h6>
+</div>
 
-<div id="content">
+<div id="content"  style="display: none">
     <header>
         <div id="query-output"></div>
         <div id="embed-api-auth-container"></div>
@@ -55,7 +57,6 @@
         </div>
     </div>
 </div>
-<!-- Load the library. -->
 <script>
     (function(w,d,s,g,js,fs){
         g=w.gapi||(w.gapi={});g.analytics={q:[],ready:function(f){this.q.push(f);}};
@@ -66,21 +67,18 @@
 </script>
 
 <!-- Include the chart.js and moment.js scripts. -->
-<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.2/moment.min.js"></script>
+<script type="text/javascript" src="../wp-content/plugins/Kiw-Analitycs-Plugin/src/js/loader.js"></script>
+<script src="../wp-content/plugins/Kiw-Analitycs-Plugin/src/js/Chart.min.js"></script>
+<script src="../wp-content/plugins/Kiw-Analitycs-Plugin/src/js/moment.min.js"></script>
 
 <!-- Include the ViewSelector2 component script. -->
-<script src="https://ga-dev-tools.appspot.com/public/javascript/embed-api/components/view-selector2.js"></script>
+<script src="../wp-content/plugins/Kiw-Analitycs-Plugin/src/js/view-selector2.js"></script>
 
 <!-- Include the DateRangeSelector component script. -->
-<script src="https://ga-dev-tools.appspot.com/public/javascript/embed-api/components/date-range-selector.js"></script>
+<script src="../wp-content/plugins/Kiw-Analitycs-Plugin/src/js/date-range-selector.js"></script>
 
 <!-- Include the ActiveUsers component script. -->
-<script src="https://ga-dev-tools.appspot.com/public/javascript/embed-api/components/active-users.js"></script>
-
-<!-- Include the CSS that styles the charts. -->
-<link rel="stylesheet" href="https://ga-dev-tools.appspot.com/public/css/chartjs-visualizations.css">
+<script src="../wp-content/plugins/Kiw-Analitycs-Plugin/src/js/active-users.js"></script>
 
 <!-- Include custom js file-->
 <script src="../wp-content/plugins/Kiw-Analitycs-Plugin/src/js/script.js"></script>

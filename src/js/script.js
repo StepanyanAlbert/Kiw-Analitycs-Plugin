@@ -5,7 +5,12 @@ let dataIds,
     countriesArr = [];
 
 gapi.analytics.ready(function() {
-    renderAll();
+    if(localStorage.getItem('clientId') && localStorage.getItem('clientId') != 'null') {
+        document.getElementById('content').style.display = 'block';
+        renderAll();
+    } else {
+        document.getElementById('authorize-button-box').style.display = 'block';
+    }
 });
 
 function renderAll() {
@@ -17,7 +22,7 @@ function renderAll() {
      */
     gapi.analytics.auth.authorize({
         container: 'embed-api-auth-container',
-        clientid: '935340515013-pm30ic9co6edran12s4hotdclfoe86va.apps.googleusercontent.com'
+        clientid: localStorage.getItem('clientId')
     });
 
 
@@ -35,16 +40,15 @@ function renderAll() {
     /**
      * Add CSS animation to visually show the when users come and go.
      */
-    activeUsers.once('success', function () {
-        this.on('change', function (data) {
+    activeUsers.once( 'success' , function () {
+        this.on('change', function ( data ) {
             let timeout;
             let element = this.container.firstChild;
             let animationClass = data.delta > 0 ? 'is-increasing' : 'is-decreasing';
-            element.className += (' ' + animationClass);
-            clearTimeout(timeout);
+            element.className += ( ' ' + animationClass );
+            clearTimeout( timeout );
             timeout = setTimeout(function () {
-                element.className =
-                    element.className.replace(/ is-(increasing|decreasing)/g, '');
+                element.className = element.className.replace( / is-(increasing | decreasing)/g, '' );
             }, 3000);
         });
     });
@@ -63,9 +67,11 @@ function renderAll() {
      * element with the id "date-range-selector-1-container", set its date range
      * and then render it to the page.
      */
+    console.log(gapi.analytics);
+
     dateRangeSelector1 = new gapi.analytics.ext.DateRangeSelector({
         container: 'date-range-selector-1-container'
-    }).set(dateRange1).execute();
+    }).set( dateRange1 ).execute();
 
 
     /**
@@ -81,19 +87,19 @@ function renderAll() {
      * Update the activeUsers component, the Chartjs charts, and the dashboard
      * title whenever the user changes the view.
      */
-    viewSelector.on('viewChange', function (data) {
+    viewSelector.on( 'viewChange' , function ( data ) {
         dataIds = data.ids;
-        let title = document.getElementById('view-name');
+        let title = $('#view-name');
         title.textContent = data.property.name + ' (' + data.view.name + ')';
 
         // Start tracking active users for this view.
-        activeUsers.set(data).execute();
-        $("#content").css('overflow','').css('height','');
+        activeUsers.set( data ).execute();
+        $('#content').css( 'overflow', '' ).css( 'height', '' );
         load();
         // Render all the of charts for this view.
-        $("#form-control-select1").val('Sessions')
-            .find("option[value=Sessions]").attr('selected', true);
-        renderWeekOverWeekChart(data.ids);
+        $('#form-control-select1').val( 'Sessions' )
+            .find( 'option[value=Sessions]' ).attr('selected', true );
+        renderWeekOverWeekChart( data.ids );
     });
 
     // Set some global Chart.js defaults.
@@ -107,35 +113,47 @@ function renderAll() {
      * the first datepicker. The handler will update the first dataChart
      * instance as well as change the dashboard subtitle to reflect the range.
      */
-    dateRangeSelector1.on('change', function( data ) {
+    dateRangeSelector1.on( 'change' , function( data ) {
         // Render all of the charts for this view.
-        let currentValue = $("#form-control-select1").val();
-        $("#content").css('overflow','').css('overflow-y','visible').css('height','');
+        let currentValue = $('#form-control-select1').val();
+        $("#content").css( 'overflow', '' ).css( 'overflow-y', 'visible' ).css( 'height', '' );
 
         load();
 
-        if (currentValue === "Users"){
-            renderYearOverYearChart( dataIds );
-        } else if (currentValue === 'Sessions') {
-            renderWeekOverWeekChart( dataIds );
-        } else if(currentValue ==='Technology') {
-            renderTopBrowsersChart( dataIds );
-        } else if (currentValue === 'Location') {
-            renderTopCountriesChart( dataIds );
-        } else if (currentValue ===  'Traffic'){
-            renderReferrersChart( dataIds );
-        } else if (currentValue ===  'LoadTime'){
-            renderPageLoadChart( dataIds );
-        } else if (currentValue ===  'Age'){
-            renderAgeChart( dataIds );
-        } else if (currentValue ===  'Gender'){
-            renderGenderChart( dataIds );
-        } else if (currentValue ===  'Device'){
-            renderDeviceChart( dataIds );
+        renderWeekOverWeekChart( dataIds );
+
+        switch ( currentValue ) {
+            case 'Users':
+                renderYearOverYearChart( dataIds );
+                break;
+            case 'Sessons':
+                renderWeekOverWeekChart( dataIds );
+                break;
+            case 'Technology':
+                renderTopBrowsersChart( dataIds );
+                break;
+            case 'Location':
+                renderTopCountriesChart( dataIds );
+                break;
+            case 'Traffic':
+                renderReferrersChart( dataIds );
+                break;
+            case 'Device':
+                renderDeviceChart( dataIds );
+                break;
+            case 'LoadTime':
+                renderPageLoadChart( dataIds );
+                break;
+            case 'Age':
+                renderAgeChart( dataIds );
+                break;
+            case 'Gender':
+                renderGenderChart( dataIds );
+                break;
         }
     });
 
-    $( "#form-control-select1" ).on('change', function(){ selectCategory() });
+    $( '#form-control-select1' ).on( 'change' , function(){ selectCategory() });
 }
 
 
@@ -146,38 +164,37 @@ function renderAll() {
  */
 function renderWeekOverWeekChart( ids ) {
     // Adjust `now` to experiment with different days, for testing only...
-    let now = moment(); // .subtract(3, 'day');
 
     let thisWeek = query({
         'ids': ids,
         'dimensions': 'ga:date,ga:nthDay',
         'metrics': 'ga:sessions',
-        'start-date': moment(dateRangeSelector1.startDateInput.value).format('YYYY-MM-DD'),
-        'end-date': moment(dateRangeSelector1.endDateInput.value).format('YYYY-MM-DD')
+        'start-date': moment( dateRangeSelector1.startDateInput.value ).format( 'YYYY-MM-DD' ),
+        'end-date': moment( dateRangeSelector1.endDateInput.value ).format( 'YYYY-MM-DD' )
     });
 
     let lastWeek = query({
         'ids': ids,
         'dimensions': 'ga:date,ga:nthDay',
         'metrics': 'ga:sessions',
-        'start-date': moment(dateRangeSelector1.startDateInput.value).subtract(1, 'week').format('YYYY-MM-DD'),
-        'end-date': moment(dateRangeSelector1.endDateInput.value).subtract(1, 'week').format('YYYY-MM-DD')
+        'start-date': moment( dateRangeSelector1.startDateInput.value ).subtract( 1, 'week' ).format( 'YYYY-MM-DD' ),
+        'end-date': moment( dateRangeSelector1.endDateInput.value ).subtract( 1, 'week' ).format( 'YYYY-MM-DD' )
     });
 
-    Promise.all( [thisWeek, lastWeek] ).then(function ( results ) {
+    Promise.all( [ thisWeek, lastWeek ] ).then(function ( results ) {
 
-        let data1 = results[0].rows.map(function ( row ) {
-            return +row[2];
+        let data1 = results[ 0 ].rows.map(function ( row ) {
+            return +row[ 2 ];
         });
-        let data2 = results[1].rows.map(function ( row ) {
-            return +row[2];
+        let data2 = results[ 1 ].rows.map(function ( row ) {
+            return +row[ 2 ];
         });
-        let labels = results[1].rows.map(function ( row ) {
-            return +row[0];
+        let labels = results[ 1 ].rows.map(function ( row ) {
+            return +row[ 0 ];
         });
 
         labels = labels.map(function ( label ) {
-            return moment(label, 'YYYYMMDD').format('ddd');
+            return moment( label, 'YYYYMMDD' ).format( 'ddd' );
         });
 
         let data = {
@@ -202,7 +219,7 @@ function renderWeekOverWeekChart( ids ) {
             ]
         };
 
-        new Chart(makeCanvas('chart-1-container')).Line(data);
+        new Chart(makeCanvas('chart-1-container')).Line( data );
         generateLegend('legend-1-container', data.datasets);
     });
 }
@@ -215,39 +232,54 @@ function renderWeekOverWeekChart( ids ) {
  */
 function renderYearOverYearChart( ids ) {
     // Adjust `now` to experiment with different days, for testing only...
-    let now = moment(); // .subtract(3, 'day');
 
     let thisYear = query({
         'ids': ids,
         'dimensions': 'ga:month,ga:nthMonth',
         'metrics': 'ga:users',
-        'start-date': moment().date(1).month(0).format('YYYY-MM-DD'),
-        'end-date': moment().add(1, 'year').date(1).month(0).format('YYYY-MM-DD')
+        'start-date': moment().date( 1 ).month( 0 ).format( 'YYYY-MM-DD' ),
+        'end-date': moment().add( 1, 'year' ).date( 1 ).month( 0 ).format( 'YYYY-MM-DD' )
     });
 
     let lastYear = query({
         'ids': ids,
         'dimensions': 'ga:month,ga:nthMonth',
         'metrics': 'ga:users',
-        'start-date': moment().subtract(1, 'year').date(1).month(0).format('YYYY-MM-DD'),
-        'end-date': moment().date(1).month(0).format('YYYY-MM-DD'),
+        'start-date': moment().subtract( 1, 'year' ).date( 1 ).month( 0 ).format( 'YYYY-MM-DD' ),
+        'end-date': moment().date( 1 ).month( 0 ).format( 'YYYY-MM-DD' ),
     });
 
-    Promise.all([thisYear, lastYear]).then(function (results) {
-        let data1 = results[0].rows.map(function (row) {
-            return +row[2];
+    Promise.all([ thisYear, lastYear ]).then(function ( results ) {
+        let data1 = results[ 0 ].rows.map(function ( row ) {
+            return +row[ 2 ];
         });
-        let data2 = results[1].rows.map(function (row) {
-            return +row[2];
+        let data2 = results[ 1 ].rows.map(function ( row ) {
+            return +row[ 2 ];
         });
-        let labels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-            'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        let labels = [
+            'Jan',
+            'Feb',
+            'Mar',
+            'Apr',
+            'May',
+            'Jun',
+            'Jul',
+            'Aug',
+            'Sep',
+            'Oct',
+            'Nov',
+            'Dec'
+        ];
 
         // Ensure the data arrays are at least as long as the labels array.
         // Chart.js bar charts don't (yet) accept sparse datasets.
-        for (let i = 0, len = labels.length; i < len; i++) {
-            if (data1[i] === undefined) data1[i] = null;
-            if (data2[i] === undefined) data2[i] = null;
+        for ( let i = 0, len = labels.length; i < len; i++ ) {
+            if ( data1[ i ] === undefined ) {
+                data1[ i ] = null;
+            }
+            if ( data2[ i ] === undefined ) {
+                data2[ i ] = null;
+            }
         }
 
         let data = {
@@ -268,10 +300,10 @@ function renderYearOverYearChart( ids ) {
             ]
         };
 
-        new Chart(makeCanvas('chart-1-container')).Bar(data);
-        generateLegend('legend-1-container', data.datasets);
-    }).catch(function (err) {
-        console.error(err.stack);
+        new Chart(makeCanvas('chart-1-container')).Bar( data );
+        generateLegend( 'legend-1-container', data.datasets );
+    }).catch(function ( err ) {
+        console.error( err.stack );
     });
 }
 
@@ -286,26 +318,40 @@ function renderTopBrowsersChart( ids ) {
         'dimensions': 'ga:browser',
         'metrics': 'ga:pageviews',
         'sort': '-ga:pageviews',
-        'start-date': moment(dateRangeSelector1.startDateInput.value).format('YYYY-MM-DD'),
-        'end-date': moment(dateRangeSelector1.endDateInput.value).format('YYYY-MM-DD'),
-    }).then(function (response) {
+        'start-date': moment(dateRangeSelector1.startDateInput.value).format( 'YYYY-MM-DD' ),
+        'end-date': moment(dateRangeSelector1.endDateInput.value).format( 'YYYY-MM-DD' ),
+    }).then(function ( response ) {
         let data = [];
-        let colors = ['#4D5360', '#949FB1', '#D4CCC5', '#E2EAE9', '#F7464A'];
+        let colors = [
+            '#4D5360',
+            '#949FB1',
+            '#D4CCC5',
+            '#E2EAE9',
+            '#F7464A'
+        ];
         let sum = 0;
 
-        if(response.rows) {
-            response.rows.forEach(function (row) {
-                sum += +row[1];
+        if( response.rows ) {
+            response.rows.forEach(function ( row ) {
+                sum += +row[ 1 ];
             });
 
-            response.rows.forEach(function (row, i) {
-                data.push({value: +row[1], color: colors[i], label: row[0] + ' (' + (+row[1] / sum * 100).toFixed(2) + '%)'});
+            response.rows.forEach(function ( row, i ) {
+                data.push({
+                    value: +row[ 1 ],
+                    color: colors[ i ],
+                    label: row[ 0 ] + ' (' + ( +row[ 1 ] / sum * 100).toFixed(2 ) + '%)'
+                });
             });
         } else {
-            data.push({value: 100, color: colors[0], label: 'Empty'});
+            data.push({
+                value: 100,
+                color: colors[ 0 ],
+                label: 'Empty'
+            });
         }
-        new Chart(makeCanvas('chart-1-container')).Doughnut(data);
-        generateLegend('legend-1-container', data);
+        new Chart(makeCanvas( 'chart-1-container' )).Doughnut( data );
+        generateLegend( 'legend-1-container', data );
     });
 }
 
@@ -321,22 +367,22 @@ function renderTopCountriesChart( ids ) {
         'dimensions': 'ga:country',
         'metrics': 'ga:sessions',
         'sort': '-ga:sessions',
-        'start-date': moment(dateRangeSelector1.startDateInput.value).format('YYYY-MM-DD'),
-        'end-date': moment(dateRangeSelector1.endDateInput.value).format('YYYY-MM-DD')
-    }).then(function (response) {
-        console.log('conutries', response);
-        let data = [['Country', 'Popularity']];
+        'start-date': moment( dateRangeSelector1.startDateInput.value ).format( 'YYYY-MM-DD' ),
+        'end-date': moment ( dateRangeSelector1.endDateInput.value ).format( 'YYYY-MM-DD' )
+    }).then(function ( response ) {
+        console.log( 'conutries', response );
+        let data = [[ 'Country', 'Popularity' ]];
         let data1 = [];
         let labels = [];
 
-        if(response.rows) {
-            response.rows.forEach(function (row) {
-                data.push([row[0], +row[1]]);
-                data1.push(+row[1]);
-                labels.push(row[0]);
+        if( response.rows ) {
+            response.rows.forEach(function ( row ) {
+                data.push( [row[ 0 ], +row[ 1 ]] );
+                data1.push( +row[ 1 ] );
+                labels.push( row[ 0 ] );
             });
         } else {
-            data.push(['Empty',100]);
+            data.push( [ 'Empty', 100 ] );
         }
 
         let data2 = {
@@ -350,19 +396,17 @@ function renderTopCountriesChart( ids ) {
                 }
             ]
         };
-        new Chart(makeCanvas('chart-1-container')).Bar(data2);
-        generateLegend('legend-1-container', data2.datasets);
+        new Chart(makeCanvas( 'chart-1-container' )).Bar( data2 );
+        generateLegend( 'legend-1-container' , data2.datasets );
 
         countriesArr = data;
 
         google.charts.load('current', {
-            'packages':['geochart'],
+            'packages':[ 'geochart' ],
             'mapsApiKey': 'AIzaSyD-9tSrke72PouQMnMX-a7eZSW0jkFMBWY'
         });
-        google.charts.setOnLoadCallback(drawRegionsMap);
+        google.charts.setOnLoadCallback( drawRegionsMap );
 
-        // new Chart(makeCanvas('chart-1-container')).Doughnut(data);
-        // generateLegend('legend-1-container', data);
     });
 }
 /**
@@ -375,22 +419,22 @@ function renderReferrersChart( ids ) {
         'dimensions': 'ga:source, ga:medium',
         'metrics': 'ga:pageviews,ga:sessionDuration,ga:exits',
         'sort': '-ga:pageviews',
-        'start-date': moment(dateRangeSelector1.startDateInput.value).format('YYYY-MM-DD'),
-        'end-date': moment(dateRangeSelector1.endDateInput.value).format('YYYY-MM-DD'),
+        'start-date': moment( dateRangeSelector1.startDateInput.value ).format( 'YYYY-MM-DD' ),
+        'end-date': moment( dateRangeSelector1.endDateInput.value ).format( 'YYYY-MM-DD' ),
         'max-results': 10
-    }).then(function (response) {
-        console.log('channels', response);
+    }).then(function ( response ) {
+        console.log( 'channels', response );
         let data1 = [];
         let labels = [];
         if(response.rows) {
-            response.rows.forEach(function (row) {
-            let name = row[0].replace(/^\(+|\)+$/g, '');
-            labels.push(name.charAt(0).toUpperCase() + name.slice(1));
-            data1.push(+row[4]);
+            response.rows.forEach(function ( row ) {
+            let name = row[ 0 ].replace(/^\(+|\)+$/g, '');
+            labels.push(name.charAt( 0 ).toUpperCase() + name.slice( 1 ));
+            data1.push( +row[ 4 ] );
         });
         } else {
-            labels.push('');
-            data1.push(0);
+            labels.push( '' );
+            data1.push( 0 );
         }
         let data = {
             labels: labels,
@@ -403,8 +447,8 @@ function renderReferrersChart( ids ) {
                 }
             ]
         };
-        new Chart(makeCanvas('chart-1-container')).Bar(data);
-        generateLegend('legend-1-container', data.datasets);
+        new Chart(makeCanvas('chart-1-container')).Bar( data );
+        generateLegend( 'legend-1-container', data.datasets );
     });
 }
 
@@ -413,27 +457,40 @@ function renderPageLoadChart( ids ) {
         'ids': ids,
         'dimensions': 'ga:date',
         'metrics': 'ga:pageLoadTime',
-        'start-date': moment(dateRangeSelector1.startDateInput.value).format('YYYY-MM-DD'),
-        'end-date': moment(dateRangeSelector1.endDateInput.value).format('YYYY-MM-DD')
-    }).then(function (response) {
-        console.log('pageLoad', response);
+        'start-date': moment( dateRangeSelector1.startDateInput.value ).format( 'YYYY-MM-DD' ),
+        'end-date': moment( dateRangeSelector1.endDateInput.value ).format( 'YYYY-MM-DD' )
+    }).then(function ( response ) {
+        console.log( 'pageLoad', response );
         let data1 = [];
         let labels = [];
         let labelsAll = [];
         if(response.rows){
-            response.rows.forEach(function (row) {
-                data1.push(parseFloat(row[1]));
-                labels.push(+row[0]);
+            response.rows.forEach(function ( row ) {
+                data1.push( parseFloat( row[ 1 ] ) );
+                labels.push( +row[0] );
             });
         } else {
-            labels.push('');
-            data1.push(0);
+            labels.push( '' );
+            data1.push( 0 );
         }
-        labels.map(function (label) {
-            let month =  +moment(label, 'YYYYMMDD').format('MM');
-            let months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-            let element = moment(label, 'YYYYMMDD').format('DD') + ' ' + months[month-1];
-            labelsAll.push(element);
+        labels.map(function ( label ) {
+            let month =  +moment( label, 'YYYYMMDD' ).format( 'MM' );
+            let months = [
+                'Jan',
+                'Feb',
+                'Mar',
+                'Apr',
+                'May',
+                'Jun',
+                'Jul',
+                'Aug',
+                'Sep',
+                'Oct',
+                'Nov',
+                'Dec'
+            ];
+            let element = moment( label, 'YYYYMMDD' ).format( 'DD' ) + ' ' + months[ month - 1 ];
+            labelsAll.push( element );
         });
         let data = {
             labels: labelsAll,
@@ -444,8 +501,8 @@ function renderPageLoadChart( ids ) {
                 data: data1,
             }]
         };
-        new Chart(makeCanvas('chart-1-container')).Bar(data);
-        generateLegend('legend-1-container', data.datasets);
+        new Chart(makeCanvas( 'chart-1-container' )).Bar( data );
+        generateLegend(  'legend-1-container' , data.datasets );
     });
 }
 
@@ -454,21 +511,21 @@ function renderAgeChart( ids ) {
         'ids': ids,
         'dimensions': 'ga:userAgeBracket',
         'metrics': 'ga:sessions',
-        'start-date': moment(dateRangeSelector1.startDateInput.value).format('YYYY-MM-DD'),
-        'end-date': moment(dateRangeSelector1.endDateInput.value).format('YYYY-MM-DD')
-    }).then(function (response) {
-        console.log('age', response);
+        'start-date': moment( dateRangeSelector1.startDateInput.value ).format( 'YYYY-MM-DD' ),
+        'end-date': moment( dateRangeSelector1.endDateInput.value ).format( 'YYYY-MM-DD' )
+    }).then(function ( response ) {
+        console.log( 'age', response );
 
         let data1 = [];
         let labels = [];
         if(response.rows) {
-            response.rows.forEach(function (row) {
-                data1.push(+row[1]);
-                labels.push(row[0]);
+            response.rows.forEach(function ( row ) {
+                data1.push( +row[1] );
+                labels.push( row[0] );
             });
         } else {
-            labels.push('Empty');
-            data1.push(0);
+            labels.push( 'Empty' );
+            data1.push( 0 );
         }
         let data = {
             labels: labels,
@@ -482,8 +539,8 @@ function renderAgeChart( ids ) {
             ]
         };
 
-        new Chart(makeCanvas('chart-1-container')).Bar(data);
-        generateLegend('legend-1-container', data.datasets);
+        new Chart(makeCanvas( 'chart-1-container' )).Bar( data );
+        generateLegend( 'legend-1-container' , data.datasets );
     });
 }
 
@@ -492,31 +549,30 @@ function renderGenderChart( ids ) {
         'ids': ids,
         'dimensions': 'ga:userGender',
         'metrics': 'ga:sessions',
-        'start-date': moment(dateRangeSelector1.startDateInput.value).format('YYYY-MM-DD'),
-        'end-date': moment(dateRangeSelector1.endDateInput.value).format('YYYY-MM-DD')
-    }).then(function (response) {
-        console.log('gender',response);
-
+        'start-date': moment( dateRangeSelector1.startDateInput.value ).format( 'YYYY-MM-DD' ),
+        'end-date': moment( dateRangeSelector1.endDateInput.value ).format( 'YYYY-MM-DD' )
+    }).then(function ( response ) {
+        console.log( 'gender',response );
 
         let data = [];
-        let colors = ['#4D5360', '#949FB1'];
-        if(response.rows) {
-            response.rows.forEach(function (row, i) {
+        let colors = [ '#4D5360', '#949FB1' ];
+        if( response.rows ) {
+            response.rows.forEach(function ( row, i ) {
                 data.push({
-                    label: row[0],
-                    value: +row[1],
-                    color: colors[i]
+                    label: row[ 0 ],
+                    value: +row[ 1 ],
+                    color: colors[ i ]
                 });
             });
         } else {
             data.push({
                 label: 'Empty',
                 value: 100,
-                color: colors[0]
+                color: colors[ 0 ]
             });
         }
-        new Chart(makeCanvas('chart-1-container')).Doughnut(data);
-        generateLegend('legend-1-container', data);
+        new Chart(makeCanvas( 'chart-1-container' )).Doughnut( data );
+        generateLegend(  'legend-1-container' , data );
     });
 }
 
@@ -526,42 +582,41 @@ function renderDeviceChart( ids ) {
         'dimensions': 'ga:deviceCategory',
         'metrics': 'ga:pageviews',
         'sort': '-ga:pageviews',
-        'start-date': moment(dateRangeSelector1.startDateInput.value).format('YYYY-MM-DD'),
-        'end-date': moment(dateRangeSelector1.endDateInput.value).format('YYYY-MM-DD')
-    }).then(function (response) {
-        console.log('device', response);
+        'start-date': moment( dateRangeSelector1.startDateInput.value ).format( 'YYYY-MM-DD' ),
+        'end-date': moment( dateRangeSelector1.endDateInput.value ).format( 'YYYY-MM-DD' )
+    }).then(function ( response ) {
+        console.log( 'device', response );
         let data = [];
-        let colors = ['#4D5360', '#949FB1', '#D4CCC5'];
+        let colors = [ '#4D5360', '#949FB1', '#D4CCC5' ];
 
-        if(response.rows) {
+        if( response.rows ) {
             let sum = 0;
 
-            response.rows.forEach(function (row, i) {
-                sum += +row[1];
+            response.rows.forEach(function ( row ) {
+                sum += +row[ 1 ];
             });
 
-            response.rows.forEach(function (row, i) {
-                let percent = ' (' + (+row[1] / sum * 100).toFixed(2) + '%)';
-                let name = ' ' + row[0].charAt(0).toUpperCase() + row[0].slice(1);
+            response.rows.forEach(function ( row, i ) {
+                let percent = ' (' + ( +row[ 1 ] / sum * 100).toFixed( 2 ) + '%)';
+                let name = ' ' + row[ 0 ].charAt( 0 ).toUpperCase() + row[ 0 ].slice( 1 );
                 let icon;
 
-                if (name.includes('Desktop')) {
+                if ( name.includes( 'Desktop' ) ) {
                     icon = ' <i class="fa fa-desktop"></i> ';
-                } else if (name.includes('Mobile')) {
+                } else if ( name.includes( 'Mobile' ) ) {
                     icon = ' <i style="font-size: 19px" class="fa fa-mobile"></i> ';
-                } else if (name.includes('Tablet')) {
+                } else if ( name.includes( 'Tablet' ) ) {
                     icon = ' <i style="font-size: 16px" class="fa fa-tablet"></i> ';
                 }
 
                 data.push({
                     label: name,
-                    value: +row[1],
-                    color: colors[i]
+                    value: +row[ 1 ],
+                    color: colors[ i ]
                 });
 
                 setTimeout(function () {
-                    console.log($('ol.Chartjs-legend li'));
-                    $('#legend-1-container').append(icon + name + percent + '<br/>');
+                    $('#legend-1-container').append( icon + name + percent + '<br/>' );
                     $('#legend-1-container li').hide();
                 }, 100);
             });
@@ -569,11 +624,11 @@ function renderDeviceChart( ids ) {
             data.push({
                 label: 'Empty',
                 value: 100,
-                color: colors[0]
+                color: colors[ 0 ]
             });
         }
-        new Chart(makeCanvas('chart-1-container')).Doughnut(data);
-        generateLegend('legend-1-container', data);
+        new Chart(makeCanvas('chart-1-container')).Doughnut( data );
+        generateLegend( 'legend-1-container', data );
     });
 }
 
@@ -584,13 +639,13 @@ function renderDeviceChart( ids ) {
  * @return {Promise} A promise.
  */
 function query( params ) {
-    return new Promise(function (resolve, reject) {
-        let data = new gapi.analytics.report.Data({query: params});
-        data.once('success', function (response) {
-            resolve(response);
+    return new Promise(function ( resolve, reject ) {
+        let data = new gapi.analytics.report.Data( {query: params} );
+        data.once( 'success' , function ( response ) {
+            resolve( response );
         })
-            .once('error', function (response) {
-                reject(response);
+            .once('error', function ( response ) {
+                reject( response );
             })
             .execute();
     });
@@ -604,14 +659,14 @@ function query( params ) {
  * @return {RenderingContext} The 2D canvas context.
  */
 function makeCanvas( id ) {
-    let container = document.getElementById(id);
-    let canvas = document.createElement('canvas');
-    let ctx = canvas.getContext('2d');
+    let container = document.getElementById( id );
+    let canvas = document.createElement( 'canvas' );
+    let ctx = canvas.getContext( '2d' );
 
     container.innerHTML = '';
     canvas.width = container.offsetWidth;
     canvas.height = container.offsetHeight;
-    container.appendChild(canvas);
+    container.appendChild( canvas );
 
     return ctx;
 }
@@ -624,13 +679,13 @@ function makeCanvas( id ) {
  * @param {Array.<Object>} items A list of labels and colors for the legend.
  */
 function generateLegend( id, items ) {
-    let legend = document.getElementById(id);
-    legend.innerHTML = items.map(function (item) {
+    let legend = document.getElementById( id );
+    legend.innerHTML = items.map(function ( item ) {
         let color = item.color || item.fillColor;
         let label = item.label;
         return '<li><i style="background:' + color + '"></i>' +
             escapeHtml( label ) + '</li>';
-    }).join('');
+    }).join( '' );
 }
 
 
@@ -640,27 +695,27 @@ function generateLegend( id, items ) {
  * @return {string} The HTML-escaped string.
  */
 function escapeHtml( str ) {
-    let div = document.createElement('div');
-    div.appendChild(document.createTextNode(str));
+    let div = document.createElement('div' );
+    div.appendChild( document.createTextNode( str ) );
     return div.innerHTML;
 }
 
 function queryAccounts() {
     // Load the Google Analytics client library.
-    gapi.client.load('analytics', 'v3').then(function() {
+    gapi.client.load( 'analytics', 'v3' ).then(function() {
         // Get a list of all Google Analytics accounts for this user
-        gapi.client.analytics.management.accounts.list().then(handleAccounts);
+        gapi.client.analytics.management.accounts.list().then( handleAccounts );
     });
 }
 
 function handleAccounts( response ) {
     // Handles the response from the accounts list method.
-    if (response.result.items && response.result.items.length) {
+    if ( response.result.items && response.result.items.length ) {
         // Get the first Google Analytics account.
-        var firstAccountId = response.result.items[0].id;
+        var firstAccountId = response.result.items[ 0 ].id;
 
         // Query for properties.
-        queryProperties(firstAccountId);
+        queryProperties( firstAccountId );
     } else {
         console.log('No accounts found for this user.');
     }
@@ -670,25 +725,25 @@ function queryProperties( accountId ) {
     // Get a list of all the properties for the account.
     gapi.client.analytics.management.webproperties.list(
         {'accountId': accountId})
-        .then(handleProperties)
-        .then(null, function(err) {
+        .then( handleProperties )
+        .then(null, function( err ) {
             // Log any errors.
-            console.log(err);
+            console.log( err );
         });
 }
 
 function handleProperties( response ) {
     // Handles the response from the webproperties list method.
-    if (response.result.items && response.result.items.length) {
+    if ( response.result.items && response.result.items.length ) {
 
         // Get the first Google Analytics account
-        var firstAccountId = response.result.items[0].accountId;
+        var firstAccountId = response.result.items[ 0 ].accountId;
 
         // Get the first property ID
-        var firstPropertyId = response.result.items[0].id;
+        var firstPropertyId = response.result.items[ 0 ].id;
 
         // Query for Views (Profiles).
-        queryProfiles(firstAccountId, firstPropertyId);
+        queryProfiles( firstAccountId, firstPropertyId );
     } else {
         console.log('No properties found for this user.');
     }
@@ -701,21 +756,21 @@ function queryProfiles( accountId, propertyId ) {
         'accountId': accountId,
         'webPropertyId': propertyId
     })
-        .then(handleProfiles)
-        .then(null, function(err) {
+        .then( handleProfiles )
+        .then(null, function( err ) {
             // Log any errors.
-            console.log(err);
+            console.log( err );
         });
 }
 
 function handleProfiles( response ) {
     // Handles the response from the profiles list method.
-    if (response.result.items && response.result.items.length) {
+    if ( response.result.items && response.result.items.length ) {
         // Get the first View (Profile) ID.
-        var firstProfileId = response.result.items[0].id;
+        var firstProfileId = response.result.items[ 0 ].id;
 
         // Query the Core Reporting API.
-        queryCoreReportingApi(firstProfileId);
+        queryCoreReportingApi( firstProfileId );
     } else {
         console.log('No views (profiles) found for this user.');
     }
@@ -726,32 +781,32 @@ function queryCoreReportingApi( profileId ) {
     // the past seven days.
     gapi.client.analytics.data.ga.get({
         'ids': 'ga:' + profileId,
-        'start-date':  moment(dateRangeSelector1.startDateInput.value).format('YYYY-MM-DD'),
-        'end-date': moment(dateRangeSelector1.endDateInput.value).format('YYYY-MM-DD'),
+        'start-date':  moment( dateRangeSelector1.startDateInput.value ).format( 'YYYY-MM-DD' ),
+        'end-date': moment( dateRangeSelector1.endDateInput.value ).format( 'YYYY-MM-DD' ),
         'metrics': 'ga:sessions'
     }).then(function( response ) {
-        var formattedJson = JSON.stringify(response.result, null, 2);
-        document.getElementById('query-output').value = formattedJson;
+        var formattedJson = JSON.stringify( response.result, null, 2 );
+        document.getElementById('query-output' ).value = formattedJson;
     })
-        .then(null, function(err) {
+        .then(null, function( err ) {
             // Log any errors.
-            console.log(err);
+            console.log( err );
         });
 }
 
 function selectCategory() {
-    currentValue = $( "#form-control-select1" ).val();
-    $("#content").css('overflow','').css('overflow-y','visible').css('height','');
+    currentValue = $( '#form-control-select1' ).val();
+    $('#content').css( 'overflow', '' ).css( 'overflow-y', 'visible' ).css( 'height', '' );
 
     load();
 
-    if(currentValue == 'Location') {
+    if( currentValue == 'Location' ) {
         $('#regions_div').show();
     } else {
         $('#regions_div').hide();
     }
 
-    switch (currentValue){
+    switch ( currentValue ) {
         case 'Users':
             renderYearOverYearChart( dataIds );
             break;
@@ -783,18 +838,18 @@ function selectCategory() {
 }
 
 function load() {
-    if (i === 0) {
+    if ( i === 0 ) {
         i = 1;
-        let elem = document.getElementById("myBar");
+        let elem = document.getElementById( 'myBar' );
         let width = 1;
-        let interval = setInterval(frame, 10);
+        let interval = setInterval( frame, 10 );
         function frame() {
-            if (width >= 100) {
-                clearInterval(interval);
+            if ( width >= 100 ) {
+                clearInterval( interval );
                 i = 0;
             } else {
                 width++;
-                elem.style.width = width + "%";
+                elem.style.width = width + '%';
             }
         }
     }
@@ -802,11 +857,15 @@ function load() {
 
 
 function drawRegionsMap() {
-    let data = google.visualization.arrayToDataTable(countriesArr);
-    let options = {colorAxis: {colors: ['blue']}};
-    let chart = new google.visualization.GeoChart(document.getElementById('regions_div'));
+    let data = google.visualization.arrayToDataTable( countriesArr );
+    let options = {
+        colorAxis: {
+            colors: [ 'blue' ]
+        }
+    };
+    let chart = new google.visualization.GeoChart( document.getElementById('regions_div') );
 
-    chart.draw(data, options);
+    chart.draw( data, options );
 }
 
 setTimeout(function () {

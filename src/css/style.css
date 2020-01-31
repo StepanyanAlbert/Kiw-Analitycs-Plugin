@@ -14,7 +14,8 @@ header {
     margin-left: 20px;
     margin-top: -15px;
 }
-#view-name, .Chartjs pre {
+#view-name,
+.Chartjs pre {
     margin: 20px;
     font-size: 1.4em;
     font-weight: 300;
@@ -31,21 +32,23 @@ header {
     display: grid;
     margin-top: 10px;
 }
-.DateRangeSelector-item{
+.DateRangeSelector-item {
     display: grid;
     max-width: 40%;
     margin-top: 10px;
     margin-right:2%;
 }
-.ViewSelector2-item label, .DateRangeSelector-item label {
+.ViewSelector2-item label,
+.DateRangeSelector-item label {
     font-weight: 700;
 }
-.line-charts, .pie-charts {
+.line-charts,
+.pie-charts {
     justify-content: space-around;
     margin: 0;
     border-bottom: 1px solid #d4d2d0;
 }
-.Chart-content{
+.Chart-content {
     width: 100%;
     /*margin-left: 2%;*/
 }
@@ -63,7 +66,7 @@ header {
 #date-range-selector-1-container {
     margin-left: 12px;
 }
-#date-range-selector-1-container > div{
+#date-range-selector-1-container > div {
     display: flex;
     justify-content: space-around;
 }
@@ -83,7 +86,7 @@ header {
 .input-side label {
     font-weight: 700;
 }
-#form-control-select1{
+#form-control-select1 {
     height: 10px;
 }
 .Chartjs-figure {
