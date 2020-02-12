@@ -2,7 +2,6 @@
 
 /*
  * Plugin Name: Google Analytics Dashboard (by KIWI-SCIENCE)
- * Plugin URI: http://wordpress.org/extend/plugins/googleanalytics/
  * Description: Use Google Analytics on your WordPress site without touching any code, and view visitor reports right in your WordPress admin dashboard!
  * Version: 1.0.0
  * Author: Kiwi-Science
@@ -35,16 +34,6 @@ if ( !defined( 'GA_MAIN_FILE_PATH' ) ) {
 }
 if ( !defined( 'GA_SHARETHIS_SCRIPTS_INCLUDED' ) ) {
 	define( 'GA_SHARETHIS_SCRIPTS_INCLUDED', 0 );
-}
-
-/**
- * Prevent to launch the plugin within different plugin dir name
- */
-if ( !preg_match( '/(\/|\\\)' . GA_NAME . '(\/|\\\)/', realpath( __FILE__ ), $test ) ) {
-	echo _( 'Invalid plugin installation directory. Please verify if the plugin\'s dir name is equal to "' . GA_NAME . '".' );
-
-	// To make able the message above to be displayed in the activation error notice.
-	die();
 }
 
 define( 'GOOGLEANALYTICS_VERSION', '2.1.3' );
